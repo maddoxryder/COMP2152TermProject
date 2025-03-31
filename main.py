@@ -1,16 +1,33 @@
-# This is a sample Python script.
+import monster
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+while monster.health_points > 0 and hero.health_points > 0:
+    print("-----------------------------------------------------------")
 
+    # Hero Attacks
+    print("The hero strikes!")
+    monster.health_points = functions.hero_attacks(hero, monster)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    # Check if the monster drops an item
+    dropped_item = monster.drop_loot()
+    if dropped_item:
+        print(f"Monster dropped {dropped_item}")
 
+        # Hero picks up item and uses it
+        if dropped_item == "Health Potion":
+            hero.health_points = min(100, hero.health_points + 5)
+            print("Hero uses Health Potion and gained 5 HP!")
+        elif dropped_item == "Smoke Bomb":
+            monster.health_points -= 2
+            print("Hero uses Smoke Bomb and confuses the Monster")
+        elif dropped_item == "Mini Explosive":
+            monster.health_points -= monster.health_points
+            print("Hero uses Mini Explosive and Blows up the Monster!")
+            print("The Monster has been destroyed!")
+        elif dropped_item == "Shield":
+            hero.combat_strength += 3
+            print("Hero picks up shield and gains 3+ Combat Strength!")
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        #If monster is still alive it attacks
+        if monster.health_points > 0:
+            print("The Monster Strikes!")
+            hero.health_points = functions.monster_attacks(monster, hero)
