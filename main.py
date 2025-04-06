@@ -149,45 +149,84 @@ while num_dream_lvls < 0 or num_dream_lvls > 3:
 
 print("num_dream_lvls: ", num_dream_lvls)
 
-
 # Fight Sequence
+# Loop while the monster and the player are alive. Call fight sequence functions
 print("    ------------------------------------------------------------------")
 print("    |    You meet the monster. FIGHT!!")
 while monster.health_points > 0 and hero.health_points > 0:
-    print("    |", end="    ")
-    input("Roll to see who strikes first (Press Enter)")
-    attack_roll = random.choice(small_dice_options)
+    # Checking for potions
+    health_potions = [item for item in belt if item == "Health Potion"]
+    poison_potions = [item for item in belt if item == "Poison Potion"]
+    print("    |    Available actions:")
+    print("    |    1. Attack")
+    if health_potions:
+        print("    |    2. Use Health Potion ({} available)".format(len(health_potions)))
+    if poison_potions:
+        print("    |    3. Use Poison Potion ({} available)".format(len(poison_potions)))
 
-    if attack_roll % 2 != 0:
+    print("    |", end="    ")
+    action = input("Choose your action (enter number): ")
+
+    if action == "1":
+        # Original attack logic
         print("    |", end="    ")
-        input("You strike (Press enter)")
-        hero.hero_attacks(monster)
-        if monster.health_points == 0:
-            num_stars = 3
-        else:
+        input("Roll to see who strikes first (Press Enter)")
+        attack_roll = random.choice(small_dice_options)
+        if not (attack_roll % 2 == 0):
             print("    |", end="    ")
-            print("------------------------------------------------------------------")
-            input("    |    The monster strikes (Press enter)!!!")
-            monster.monster_attacks(hero)
-            if hero.health_points == 0:
-                num_stars = 1
-            else:
-                num_stars = 2
-    else:
-        print("    |", end="    ")
-        input("The Monster strikes (Press enter)")
-        monster.monster_attacks(hero)
-        if hero.health_points == 0:
-            num_stars = 1
-        else:
-            print("    |", end="    ")
-            print("------------------------------------------------------------------")
-            input("The hero strikes!! (Press enter)")
+            input("You strike (Press enter)")
             hero.hero_attacks(monster)
             if monster.health_points == 0:
                 num_stars = 3
             else:
-                num_stars = 2
+                print("    |", end="    ")
+                print("------------------------------------------------------------------")
+                input("    |    The monster strikes (Press enter)!!!")
+                monster.monster_attacks(hero)
+                if hero.health_points == 0:
+                    num_stars = 1
+                else:
+                    num_stars = 2
+        else:
+            print("    |", end="    ")
+            input("The Monster strikes (Press enter)")
+            monster.monster_attacks(hero)
+            if hero.health_points == 0:
+                num_stars = 1
+            else:
+                print("    |", end="    ")
+                print("------------------------------------------------------------------")
+                input("The hero strikes!! (Press enter)")
+                hero.hero_attacks(monster)
+                if monster.health_points == 0:
+                    num_stars = 3
+                else:
+                    num_stars = 2
+
+    elif action == "2" and health_potions:
+        # Use Health Potion
+        if hero.use_potion("Health Potion"):
+            belt.remove("Health Potion")
+        # Monster still gets to attack
+        print("    |", end="    ")
+        input("The monster strikes while you're drinking! (Press enter)")
+        monster.monster_attacks(hero)
+        if hero.health_points == 0:
+            num_stars = 1
+
+    elif action == "3" and poison_potions:
+        # Use Poison Potion
+        if hero.use_potion("Poison Potion", monster):
+            belt.remove("Poison Potion")
+        # Monster still gets to attack
+        print("    |", end="    ")
+        input("The monster strikes while you throw the poison! (Press enter)")
+        monster.monster_attacks(hero)
+        if hero.health_points == 0:
+            num_stars = 1
+
+    else:
+        print("    |    Invalid choice or no potions available")
 
 if monster.health_points <= 0:
     winner = "Hero"
