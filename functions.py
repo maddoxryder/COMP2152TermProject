@@ -6,13 +6,13 @@ import random
 
 
 def use_loot(belt, health_points):
-    good_loot_options = ["Health Potion", "Leather Boots"]
+    good_loot_options = ["Health Potion"]
     bad_loot_options = ["Poison Potion"]
 
     print("    |    !!You see a monster in the distance! So you quickly use your first item:")
     first_item = belt.pop(0)
     if first_item in good_loot_options:
-        health_points = min(20, (health_points + 2))
+        health_points = min(20, (health_points + 5))
         print("    |    You used " + first_item + " to up your health to " + str(health_points))
     elif first_item in bad_loot_options:
         health_points = max(0, (health_points - 2))
@@ -39,9 +39,21 @@ def collect_loot(loot_options, belt):
               @@@@@@@@@@@@          
               """
     print(ascii_image3)
+
+    # Regular loot roll
     loot_roll = random.choice(range(1, len(loot_options) + 1))
     loot = loot_options.pop(loot_roll - 1)
     belt.append(loot)
+
+    # Forest environment bonus (30% chance for extra loot)
+    if 'current_environment' in globals() and current_environment == "Forest":
+        if random.random() < 0.3:  # 30% chance for bonus loot
+            if loot_options:  # Only if there's loot left
+                bonus_roll = random.choice(range(1, len(loot_options) + 1))
+                bonus_loot = loot_options.pop(bonus_roll - 1)
+                belt.append(bonus_loot)
+                print("    |    Forest blessing! Found extra loot:", bonus_loot)
+
     print("    |    Your belt: ", belt)
     return loot_options, belt
 
@@ -188,3 +200,12 @@ def load_monster_kills():
         return 0  # If save.txt doesn’t exist yet
 
     return 0  # Default fallback
+
+def change_environment():
+    global current_environment
+    current_environment = random.choice(list(environments.keys()))
+    print(f"\n    |    The battlefield shifts to a {current_environment} environment!")
+    print(f"    |    Effect: {environments[current_environment]['hero_penalty'] if 'hero_penalty' in environments[current_environment] else environments[current_environment]['hero_bonus']}")
+    print(f"    |    Monster Effect: {environments[current_environment]['monster_bonus']}")
+    return current_environment
+
