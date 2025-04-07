@@ -1,0 +1,9 @@
+Monster has killed the hero previously
+Monsters Killed: 0
+Hero pep has killed a monster and gained 3 stars.
+Monster has killed the hero previously
+Monsters Killed: 0
+Monster has killed the hero previously
+Monsters Killed: 0
+Hero MaO has killed a monster and gained 2 stars.
+Hero pop has killed a monster and gained 0 stars.
